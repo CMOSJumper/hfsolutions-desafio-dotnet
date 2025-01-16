@@ -1,8 +1,6 @@
 ﻿using System.Linq.Expressions;
-using HFSolutions.TestDotNet.Abstractions.Crud;
 using HFSolutions.TestDotNet.Application.Dtos.UserDtos;
 using HFSolutions.TestDotNet.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace HFSolutions.TestDotNet.Application.Interfaces
 {
