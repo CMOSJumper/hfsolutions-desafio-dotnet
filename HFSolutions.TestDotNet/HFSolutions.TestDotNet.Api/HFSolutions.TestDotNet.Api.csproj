@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\HFSolutions.TestDotNet.Application\HFSolutions.TestDotNet.Application.csproj" />
     <ProjectReference Include="..\HFSolutions.TestDotNet.Infrastructure\HFSolutions.TestDotNet.Infrastructure.csproj" />
   </ItemGroup>
 
