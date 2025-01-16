@@ -1,7 +1,8 @@
-﻿using System.Linq.Expressions;
-using HFSolutions.TestDotNet.Application.Dtos.UserTaskDto;
+﻿using HFSolutions.TestDotNet.Application.Dtos.UserTaskDto;
 using HFSolutions.TestDotNet.Application.Extensions;
 using HFSolutions.TestDotNet.Application.Interfaces;
+using HFSolutions.TestDotNet.Application.QueryParams;
+using HFSolutions.TestDotNet.Application.Responses;
 using HFSolutions.TestDotNet.Domain.Entities;
 using HFSolutions.TestDotNet.Infrastructure.Data;
 using Mapster;
@@ -35,14 +36,13 @@ namespace HFSolutions.TestDotNet.Application.Services
             }
         }
 
-        public async Task<IEnumerable<UserTaskDto>> ReadAllAsync(Expression<Func<UserTask, bool>>? predicate = null)
+        public async Task<IEnumerable<UserTaskDto>> ReadAllAsync()
         {
             try
             {
                 var userTasksDto = await _context.UserTask
                     .Include(ut => ut.TaskState)
                     .Include(ut => ut.User)
-                    .WhereIf(predicate != null, predicate!)
                     .Select(ut => ut.Adapt<UserTaskDto>())
                     .ToListAsync();
 
@@ -53,6 +53,51 @@ namespace HFSolutions.TestDotNet.Application.Services
                 _logger.LogError(ex, "An error ocurred trying to get all user tasks.");
 
                 return [];
+            }
+        }
+
+        public async Task<PagedResponse<UserTaskDto>> ReadAllAsync(UserTaskQueryParams? userTaskQueryParams = null, PaginationQueryParams? paginationQueryParams = null)
+        {
+            try
+            {
+                paginationQueryParams ??= new PaginationQueryParams();
+
+                var userTasksDto = await _context.UserTask
+                    .Include(ut => ut.TaskState)
+                    .Include(ut => ut.User)
+                    //filter task state
+                    .WhereIf(userTaskQueryParams != null && userTaskQueryParams.TaskStateId.HasValue,
+                        ut => ut.TaskStateId == userTaskQueryParams!.TaskStateId)
+                    //filter expiration date from
+                    .WhereIf(userTaskQueryParams != null && userTaskQueryParams.ExpirationDateFrom.HasValue && !userTaskQueryParams.ExpirationDateTo.HasValue,
+                        ut => ut.ExpirationDate >= userTaskQueryParams!.ExpirationDateFrom!.Value)
+                    //filter expiration date to
+                    .WhereIf(userTaskQueryParams != null && userTaskQueryParams.ExpirationDateTo.HasValue && !userTaskQueryParams.ExpirationDateFrom.HasValue,
+                        ut => ut.ExpirationDate <= userTaskQueryParams!.ExpirationDateTo!.Value)
+                    //filter expiration date range
+                    .WhereIf(userTaskQueryParams != null && userTaskQueryParams.ExpirationDateTo.HasValue && userTaskQueryParams.ExpirationDateFrom.HasValue,
+                        ut => ut.ExpirationDate >= userTaskQueryParams!.ExpirationDateFrom!.Value
+                            && ut.ExpirationDate <= userTaskQueryParams!.ExpirationDateTo!.Value)
+                    .Select(ut => ut.Adapt<UserTaskDto>())
+                    .ToListAsync();
+
+                var userTasksDtoPaged = userTasksDto
+                    .Skip((paginationQueryParams.PageNumber - 1) * paginationQueryParams.PageSize)
+                    .Take(paginationQueryParams.PageSize)
+                    .ToList();
+
+                int totalPagedRecords = userTasksDtoPaged.Count;
+                int totalRecords = userTasksDto.Count;
+
+                var response = new PagedResponse<UserTaskDto>(userTasksDtoPaged, paginationQueryParams, totalPagedRecords, totalRecords);
+
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error ocurred trying to get all user tasks.");
+
+                return new PagedResponse<UserTaskDto>([], new PaginationQueryParams(), 0, 0);
             }
         }
 

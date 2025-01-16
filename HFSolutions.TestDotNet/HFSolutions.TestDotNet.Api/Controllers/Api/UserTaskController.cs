@@ -2,6 +2,8 @@
 using FluentValidation.AspNetCore;
 using HFSolutions.TestDotNet.Application.Dtos.UserTaskDto;
 using HFSolutions.TestDotNet.Application.Interfaces;
+using HFSolutions.TestDotNet.Application.QueryParams;
+using HFSolutions.TestDotNet.Application.Responses;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HFSolutions.TestDotNet.Api.Controllers.Api
@@ -47,10 +49,18 @@ namespace HFSolutions.TestDotNet.Api.Controllers.Api
             return Ok(userTask);
         }
 
-        [HttpGet("All")]
+        [HttpGet("AllTasks")]
         public async Task<ActionResult<IEnumerable<UserTaskDto>>> GetAll()
         {
             var userTasks = await _userTaskService.ReadAllAsync();
+
+            return Ok(userTasks);
+        }
+
+        [HttpGet("All")]
+        public async Task<ActionResult<PagedResponse<UserTaskDto>>> GetAll([FromQuery] UserTaskQueryParams? userTaskQueryParams = null, [FromQuery] PaginationQueryParams? paginationQueryParams = null)
+        {
+            var userTasks = await _userTaskService.ReadAllAsync(userTaskQueryParams, paginationQueryParams);
 
             return Ok(userTasks);
         }
