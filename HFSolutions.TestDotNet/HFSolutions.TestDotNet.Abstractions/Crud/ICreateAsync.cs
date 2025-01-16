@@ -2,6 +2,6 @@
 {
     public interface ICreateAsync<TModel> where TModel : class
     {
-        Task<TModel> CreateAsync(TModel model);
+        Task<TModel?> CreateAsync(TModel model);
     }
 }

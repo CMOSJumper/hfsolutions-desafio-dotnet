@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="11.3.0" />
+    <PackageReference Include="Mapster" Version="7.4.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HFSolutions.TestDotNet.Abstractions\HFSolutions.TestDotNet.Abstractions.csproj" />
+    <ProjectReference Include="..\HFSolutions.TestDotNet.Domain\HFSolutions.TestDotNet.Domain.csproj" />
+    <ProjectReference Include="..\HFSolutions.TestDotNet.Infrastructure\HFSolutions.TestDotNet.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

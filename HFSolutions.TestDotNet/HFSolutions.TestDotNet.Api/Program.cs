@@ -1,9 +1,13 @@
+using FluentValidation;
+using System;
+using HFSolutions.TestDotNet.Application.Interfaces;
+using HFSolutions.TestDotNet.Application.Services;
 using HFSolutions.TestDotNet.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using HFSolutions.TestDotNet.Application.Validators.UserValidators;
+using HFSolutions.TestDotNet.Application.Dtos.UserDtos;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
 
 builder.Services.AddControllers();
 builder.Services.AddDbContext<UserTasksContext>(options =>
@@ -13,13 +17,16 @@ builder.Services.AddDbContext<UserTasksContext>(options =>
     options.UseSqlServer(connectionString, sql => sql.MigrationsAssembly(typeof(UserTasksContext).Assembly.GetName().Name));
 });
 
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddScoped<ICustomPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IValidator<CreateUserDto>, CreateUserDtoValidator>();
+builder.Services.AddScoped<IValidator<UserSecureDto>, UserSecureDtoValidator>();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
