@@ -1,13 +1,16 @@
-﻿using FluentValidation;
+﻿using System.IdentityModel.Tokens.Jwt;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using HFSolutions.TestDotNet.Application.Dtos.UserDtos;
 using HFSolutions.TestDotNet.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HFSolutions.TestDotNet.Api.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserController(
         ILogger<UserController> logger,
         IUserService userService,
@@ -18,6 +21,17 @@ namespace HFSolutions.TestDotNet.Api.Controllers.Api
         private readonly IUserService _userService = userService;
         private readonly IValidator<CreateUserDto> _createUserDtoValidator = createUserDtoValidator;
         private readonly IValidator<UserSecureDto> _userSecureDtoValidator = userSecureDtoValidator;
+
+        [HttpPost("Login")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Login([FromBody] UserLoginDto userLoginDto)
+        {
+            var token = await _userService.Login(userLoginDto);
+
+            return token != null
+                ? Ok(token)
+                : StatusCode(StatusCodes.Status401Unauthorized, "Username or password incorrect.");
+        }
 
         [HttpPost]
         public async Task<ActionResult<UserSecureDto?>> Post([FromBody] CreateUserDto createUserDto)
