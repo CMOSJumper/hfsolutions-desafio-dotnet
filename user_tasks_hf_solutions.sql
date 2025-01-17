@@ -50,3 +50,4 @@ VALUES
 ('Pendiente'),
 ('En progreso'),
 ('Completada');
+GO
