@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using FluentValidation.AspNetCore;
+using HFSolutions.TestDotNet.Api.Extensions;
 using HFSolutions.TestDotNet.Application.Dtos.UserTaskDto;
 using HFSolutions.TestDotNet.Application.Interfaces;
 using HFSolutions.TestDotNet.Application.QueryParams;
@@ -36,6 +37,8 @@ namespace HFSolutions.TestDotNet.Api.Controllers.Api
                 return BadRequest(ModelState);
             }
 
+            createUserTaskDto.UserId = User.GetUserId();
+
             var userTask = await _userTaskService.CreateAsync(createUserTaskDto);
 
             return userTask != null
@@ -46,15 +49,19 @@ namespace HFSolutions.TestDotNet.Api.Controllers.Api
         [HttpGet("{id}")]
         public async Task<ActionResult<UserTaskDto>> Get(int id)
         {
-            var userTask = await _userTaskService.ReadAsync(id);
+            int userId = User.GetUserId();
+            var userTask = await _userTaskService.ReadAsync(userId, id);
 
-            return Ok(userTask);
+            return userTask != null
+                ? Ok(userTask)
+                : NotFound("The requested user task does not exist.");
         }
 
         [HttpGet("AllTasks")]
         public async Task<ActionResult<IEnumerable<UserTaskDto>>> GetAll()
         {
-            var userTasks = await _userTaskService.ReadAllAsync();
+            int userId = User.GetUserId();
+            var userTasks = await _userTaskService.ReadAllAsync(userId);
 
             return Ok(userTasks);
         }
@@ -62,7 +69,8 @@ namespace HFSolutions.TestDotNet.Api.Controllers.Api
         [HttpGet("All")]
         public async Task<ActionResult<PagedResponse<UserTaskDto>>> GetAll([FromQuery] UserTaskQueryParams? userTaskQueryParams = null, [FromQuery] PaginationQueryParams? paginationQueryParams = null)
         {
-            var userTasks = await _userTaskService.ReadAllAsync(userTaskQueryParams, paginationQueryParams);
+            int userId = User.GetUserId();
+            var userTasks = await _userTaskService.ReadAllAsync(userId, userTaskQueryParams, paginationQueryParams);
 
             return Ok(userTasks);
         }
@@ -85,21 +93,24 @@ namespace HFSolutions.TestDotNet.Api.Controllers.Api
                 return BadRequest(ModelState);
             }
 
+            updateUserTaskDto.UserId = User.GetUserId();
+
             var userTask = await _userTaskService.UpdateAsync(id, updateUserTaskDto);
 
             return userTask != null
                 ? Ok(userTask)
-                : StatusCode(StatusCodes.Status500InternalServerError, "An error ocurred creating the user task.");
+                : StatusCode(StatusCodes.Status500InternalServerError, "An error ocurred updating the user task.");
         }
 
         [HttpDelete("{id}")]
         public async Task<ActionResult<int>> Delete(int id)
         {
-            var result = await _userTaskService.DeleteAsync(id);
+            int userId = User.GetUserId();
+            var result = await _userTaskService.DeleteAsync(userId, id);
 
             return result > 0
                 ? Ok(result)
-                : Problem();
+                : StatusCode(StatusCodes.Status500InternalServerError, "An error ocurred deleting the user task.");
         }
     }
 }

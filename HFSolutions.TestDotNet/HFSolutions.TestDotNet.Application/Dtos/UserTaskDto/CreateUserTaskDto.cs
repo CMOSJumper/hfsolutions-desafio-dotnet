@@ -1,4 +1,5 @@
-﻿using HFSolutions.TestDotNet.Domain.Entities;
+﻿using System.Text.Json.Serialization;
+using HFSolutions.TestDotNet.Domain.Entities;
 using Mapster;
 
 namespace HFSolutions.TestDotNet.Application.Dtos.UserTaskDto
@@ -8,6 +9,7 @@ namespace HFSolutions.TestDotNet.Application.Dtos.UserTaskDto
         public string Description { get; set; } = string.Empty;
         public DateTime ExpirationDate { get; set; }
         public int TaskStateId { get; set; }
+        [JsonIgnore]
         public int UserId { get; set; }
 
         public static implicit operator UserTask(CreateUserTaskDto createUserTaskDto) => createUserTaskDto.Adapt<UserTask>();

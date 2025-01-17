@@ -24,7 +24,7 @@ namespace HFSolutions.TestDotNet.Application.Services
                 await _context.UserTask.AddAsync(newUserTask);
                 await _context.SaveChangesAsync();
 
-                var userTaskCreated = await ReadAsync(newUserTask.UserTaskId);
+                var userTaskCreated = await ReadAsync(createUserTaskDto.UserId, newUserTask.UserTaskId);
 
                 return userTaskCreated;
             }
@@ -36,13 +36,14 @@ namespace HFSolutions.TestDotNet.Application.Services
             }
         }
 
-        public async Task<IEnumerable<UserTaskDto>> ReadAllAsync()
+        public async Task<IEnumerable<UserTaskDto>> ReadAllAsync(int userId)
         {
             try
             {
                 var userTasksDto = await _context.UserTask
                     .Include(ut => ut.TaskState)
                     .Include(ut => ut.User)
+                    .Where(ut => ut.UserId == userId)
                     .Select(ut => ut.Adapt<UserTaskDto>())
                     .ToListAsync();
 
@@ -56,7 +57,7 @@ namespace HFSolutions.TestDotNet.Application.Services
             }
         }
 
-        public async Task<PagedResponse<UserTaskDto>> ReadAllAsync(UserTaskQueryParams? userTaskQueryParams = null, PaginationQueryParams? paginationQueryParams = null)
+        public async Task<PagedResponse<UserTaskDto>> ReadAllAsync(int userId, UserTaskQueryParams? userTaskQueryParams = null, PaginationQueryParams? paginationQueryParams = null)
         {
             try
             {
@@ -65,6 +66,7 @@ namespace HFSolutions.TestDotNet.Application.Services
                 var userTasksDto = await _context.UserTask
                     .Include(ut => ut.TaskState)
                     .Include(ut => ut.User)
+                    .Where(ut => ut.UserId == userId)
                     //filter task state
                     .WhereIf(userTaskQueryParams != null && userTaskQueryParams.TaskStateId.HasValue,
                         ut => ut.TaskStateId == userTaskQueryParams!.TaskStateId)
@@ -101,13 +103,14 @@ namespace HFSolutions.TestDotNet.Application.Services
             }
         }
 
-        public async Task<UserTaskDto?> ReadAsync(int id)
+        public async Task<UserTaskDto?> ReadAsync(int userId, int id)
         {
             try
             {
                 UserTaskDto? userTaskDto = await _context.UserTask
                     .Include(ut => ut.TaskState)
                     .Include(ut => ut.User)
+                    .Where(ut => ut.UserId == userId)
                     .FirstOrDefaultAsync(ut => ut.UserTaskId == id);
 
                 return userTaskDto;
@@ -127,12 +130,17 @@ namespace HFSolutions.TestDotNet.Application.Services
                 var userTask = await _context.UserTask.FirstOrDefaultAsync(ut => ut.UserTaskId == id)
                     ?? throw new NullReferenceException("The user task specified does not exist.");
 
+                if (userTask.UserId != updateUserTaskDto.UserId)
+                {
+                    throw new Exception("The user is not the owner of the task.");
+                }
+
                 updateUserTaskDto.UserId = userTask.UserId;
 
                 _context.Entry(userTask).CurrentValues.SetValues(updateUserTaskDto);
                 await _context.SaveChangesAsync();
 
-                var updatedUserTask = await ReadAsync(userTask.UserTaskId);
+                var updatedUserTask = await ReadAsync(updateUserTaskDto.UserId, userTask.UserTaskId);
 
                 return updatedUserTask;
             }
@@ -144,12 +152,17 @@ namespace HFSolutions.TestDotNet.Application.Services
             }
         }
 
-        public async Task<int> DeleteAsync(int id)
+        public async Task<int> DeleteAsync(int userId, int id)
         {
             try
             {
                 var userTask = await _context.UserTask.FirstOrDefaultAsync(ut => ut.UserTaskId == id)
                     ?? throw new NullReferenceException("The user task specified does not exist.");
+
+                if (userTask.UserId != userId)
+                {
+                    throw new Exception("The user is not the owner of the task.");
+                }
 
                 _context.UserTask.Remove(userTask);
                 int result = await _context.SaveChangesAsync();
