@@ -48,4 +48,18 @@ El nombre del script de la base de datos es: *user_tasks_hf_solutions.sql*.
 
 Se realizaron dos test unitarios, uno para inicio de sesión y otro para obtener las tareas de un usuario logueado.
 
-Para poder ejecutar correctamente las pruebas, en el archivo *appsettings.json* del proyecto *HFSolutions.TestDotNet.Tests* se debe cambiar la url de la API en la sección **ApiUrls:Base**.
+- Para poder ejecutar correctamente las pruebas, en el archivo *appsettings.json* del proyecto *HFSolutions.TestDotNet.Tests* se debe cambiar la url de la API en la sección **ApiUrls:Base**.
+
+- También de los tests *LoginTests* y *UserTasksTests* se debe cambiar el usuario y contraseña de la data en línea con los que se ejecutan. Por ejemplo:
+
+```csharp
+//HFSolutions.TestDotNet.Tests.UserTests.LoginTests.cs Línea 25
+[Theory]
+[InlineData("<USUARIO>", "<CONTRASEÑA>")]
+public async Task Login_Should_Get_JWT_Token(string username, string password)
+{
+    string token = await _userServiceTests.Login(username, password);
+
+    Assert.NotEmpty(token);
+}
+```
