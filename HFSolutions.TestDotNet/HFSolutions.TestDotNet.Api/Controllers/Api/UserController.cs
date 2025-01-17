@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using HFSolutions.TestDotNet.Application.Dtos.UserDtos;
 using HFSolutions.TestDotNet.Application.Interfaces;
