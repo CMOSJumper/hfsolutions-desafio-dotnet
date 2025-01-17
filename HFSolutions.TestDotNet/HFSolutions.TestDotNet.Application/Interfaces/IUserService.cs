@@ -6,6 +6,7 @@ namespace HFSolutions.TestDotNet.Application.Interfaces
 {
     public interface IUserService
     {
+        Task<string?> Login(UserLoginDto userLoginDto);
         Task<UserSecureDto?> CreateAsync(CreateUserDto createUserDto);
         Task<IEnumerable<UserSecureDto>> ReadAllAsync(Expression<Func<User, bool>>? predicate = null);
         Task<UserSecureDto?> ReadAsync(int id);

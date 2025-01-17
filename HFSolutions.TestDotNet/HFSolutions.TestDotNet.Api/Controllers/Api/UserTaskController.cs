@@ -4,12 +4,14 @@ using HFSolutions.TestDotNet.Application.Dtos.UserTaskDto;
 using HFSolutions.TestDotNet.Application.Interfaces;
 using HFSolutions.TestDotNet.Application.QueryParams;
 using HFSolutions.TestDotNet.Application.Responses;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HFSolutions.TestDotNet.Api.Controllers.Api
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class UserTaskController(
         ILogger<UserTaskController> logger,
         IUserTaskService userTaskService,
