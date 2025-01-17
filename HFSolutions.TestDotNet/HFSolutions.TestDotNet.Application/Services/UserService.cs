@@ -52,7 +52,7 @@ namespace HFSolutions.TestDotNet.Application.Services
         {
             try
             {
-                var user = await _context.User.FirstOrDefaultAsync(u => u.UserName == userLoginDto.UserName) 
+                var user = await _context.User.FirstOrDefaultAsync(u => u.UserName == userLoginDto.UserName)
                     ?? throw new NullReferenceException("The given user doe snot exist.");
 
                 bool loginResult = _passwordHasher.VerifyPasswordHash(user.Password, userLoginDto.Password);
