@@ -26,6 +26,8 @@ también asignará el rol *db_owner* a la misma, por lo tanto se necesita que se
 
 El proceso de creación de la base de datos fue mediante la técnica *Code First*, ya que por tiempo y dado el tamaño del modelado de datos, fue la opción más rápida, así que el script resultante es a base de las migraciones realizadas en código.
 
+El nombre del script de la base de datos es: *user_tasks_hf_solutions.sql*.
+
 ## 3.- Información adicional
 
 ### 3.1.- General
