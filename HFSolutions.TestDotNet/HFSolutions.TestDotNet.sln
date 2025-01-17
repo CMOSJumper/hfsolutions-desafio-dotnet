@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFSolutions.TestDotNet.Infr
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFSolutions.TestDotNet.Application", "HFSolutions.TestDotNet.Application\HFSolutions.TestDotNet.Application.csproj", "{C63B45F5-22A5-41C0-A551-126328419CFC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HFSolutions.TestDotNet.Tests", "HFSolutions.TestDotNet.Tests\HFSolutions.TestDotNet.Tests.csproj", "{9ABEDE36-07FD-49D8-B777-78FAEE4072E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{C63B45F5-22A5-41C0-A551-126328419CFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C63B45F5-22A5-41C0-A551-126328419CFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C63B45F5-22A5-41C0-A551-126328419CFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9ABEDE36-07FD-49D8-B777-78FAEE4072E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9ABEDE36-07FD-49D8-B777-78FAEE4072E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9ABEDE36-07FD-49D8-B777-78FAEE4072E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9ABEDE36-07FD-49D8-B777-78FAEE4072E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
